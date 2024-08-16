@@ -20,12 +20,9 @@ from adultcensus_model.config.core import DATASET_DIR, TRAINED_MODEL_DIR, config
 def pre_pipeline_preparation(*, data_frame: pd.DataFrame) -> pd.DataFrame:
 
     # binary encode the class(target) column
-    unique_values = data_frame['class'].unique()
-    # Apply binary encoding if there are exactly two unique values
-    if len(unique_values) == 2:
-        data_frame['class'] = data_frame['class'].map({unique_values[0]: 0, unique_values[1]: 1})
-        data_frame['class'] = data_frame['class'].astype(int)
-        print("Class(target) has been binary encoded.")
+    if config.model_config.class_var in data_frame.columns:
+        data_frame[config.model_config.class_var] = data_frame[config.model_config.class_var].map(config.model_config.class_mappings)
+
     return data_frame
 
 
@@ -35,7 +32,9 @@ def _load_raw_dataset(*, file_name: str) -> pd.DataFrame:
 
 def load_dataset(*, file_name: str) -> pd.DataFrame:
     dataframe = fetch_openml(data_id=1590, parser='auto', as_frame=True).frame
-    transformed = pre_pipeline_preparation(data_frame=dataframe)
+    # Check if the class(target) column exists in the DataFrame only then do preprocessing step
+    if config.model_config.class_var in dataframe.columns:
+        transformed = pre_pipeline_preparation(data_frame=dataframe)
 
     return transformed
 

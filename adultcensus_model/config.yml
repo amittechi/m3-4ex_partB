@@ -86,7 +86,7 @@ sex_mappings:
 
 class_mappings:
   ">50K": 0
-  "<50k": 1
+  "<=50K": 1
 
 education_mappings:
   Preschool: 0

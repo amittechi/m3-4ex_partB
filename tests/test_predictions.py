@@ -8,14 +8,14 @@ parent, root = file.parent, file.parents[1]
 sys.path.append(str(root))
 
 import numpy as np
-from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.metrics import roc_auc_score, accuracy_score, confusion_matrix, f1_score, precision_score
 
-from bikeshare_model.predict import make_prediction
+from adultcensus_model.predict import make_prediction
 
 
 def test_make_prediction(sample_input_data):
     # Given
-    expected_no_predictions = 3476
+    expected_no_predictions = 9769
 
     # When
     result = make_prediction(input_data=sample_input_data[0])
@@ -28,12 +28,14 @@ def test_make_prediction(sample_input_data):
     assert len(predictions) == expected_no_predictions
     _predictions = list(predictions)
     y_true = sample_input_data[1]
-    r2score =  r2_score(y_true, _predictions)
-    print("R2 score:", r2score)
-    assert r2score > 0.9
-    mse = mean_squared_error(y_true, _predictions)
-    mae = mse**0.5
-    print("Mean squared error:", mse)
-    assert mse < 2000
-    assert mae < 0.20*y_true.mean()
+    accuracy =  accuracy_score(y_true, _predictions)
+    precision =  precision_score(y_true, _predictions)
+    f1 =  f1_score(y_true, _predictions)
+
+    print("accuracy:", accuracy)
+    assert accuracy > 0.85
+    print("precision:", precision)
+    assert precision > 0.85
+    print("f1:", f1)
+    assert f1 > 0.9
 

@@ -10,61 +10,42 @@ sys.path.append(str(root))
 
 import numpy as np
 import math
-from bikeshare_model.config.core import config
-from bikeshare_model.processing.features import WeekdayImputer
-from bikeshare_model.processing.features import WeathersitImputer
-from bikeshare_model.processing.features import Mapper
-from bikeshare_model.processing.features import OutlierHandler
+from adultcensus_model.config.core import config
+from adultcensus_model.processing.features import CustomMapper
+from adultcensus_model.processing.features import ModeImputer
 
 
-def test_weekday_imputer_transformer(sample_input_data):
-    # Given
-    transformer = WeekdayImputer(
-        variables=[config.model_config.weekday_var, config.model_config.dtedays_var] # [weekday, dteday]
-    )
-    assert np.isnan(sample_input_data[0].loc[7046,'weekday'])
-
-    # When
-    subject = transformer.fit(sample_input_data[0]).transform(sample_input_data[0])
-
-    # Then
-    assert subject.loc[7046,'weekday'] == 'Wed'
+def test_mode_imputer_transformer(sample_input_data):
     
-def test_weathersit_imputer_transformer(sample_input_data):
+    # Apply ModeImputer
+    imputer = ModeImputer(variables=['workclass', 'occupation'])
+    
+    null_workclass_indexes = sample_input_data[0][sample_input_data[0]['workclass'].isnull()].index.tolist()
+    null_occupation_indexes = sample_input_data[0][sample_input_data[0]['occupation'].isnull()].index.tolist()
+    
     # Given
-    transformer = WeathersitImputer(
-        variables=config.model_config.weathersit_var # [weathersit]
-    )
-    assert np.isnan(sample_input_data[0].loc[12230,'weathersit'])
+    assert np.isnan(sample_input_data[0].loc[null_workclass_indexes[0],'workclass'])
+    assert np.isnan(sample_input_data[0].loc[null_occupation_indexes[0],'occupation'])
 
     # When
-    subject = transformer.fit(sample_input_data[0]).transform(sample_input_data[0])
+    subject = imputer.fit_transform(sample_input_data[0])
 
     # Then
-    assert subject.loc[12230,'weathersit'] == 'Clear'
+    assert subject.loc[null_workclass_indexes[0],'workclass'] == 'Private'
+
+    # Then
+    assert subject.loc[null_workclass_indexes[0],'occupation'] == 'Prof-specialty'
     
 def test_mapper_transformer(sample_input_data):
     # Given
-    transformer = Mapper(
-        config.model_config.mnth_var, config.model_config.mnth_mappings # [mnth]
+    transformer = CustomMapper(
+        config.model_config.education_var, config.model_config.education_mappings # [education]
     )
-    assert sample_input_data[0].loc[12830,'mnth'] == 'April'
-
-    # When
-    subject = transformer.fit(sample_input_data[0]).transform(sample_input_data[0])
-
-    # Then
-    assert subject.loc[12830,'mnth'] == 4
     
-def test_outlier_transformer(sample_input_data):
-    # Given
-    transformer = OutlierHandler(
-        variables=[config.model_config.windspeed_var] # [mnth]
-    )
-    assert round(sample_input_data[0].loc[11376,'windspeed'], 4) == 43.0006
+    bachelors_education_indexes = sample_input_data[0][sample_input_data[0]['education'] == 'Bachelors'].index.tolist()
+    assert sample_input_data[0].loc[bachelors_education_indexes[0],'education'] == 'Bachelors'
 
     # When
-    subject = transformer.fit(sample_input_data[0]).transform(sample_input_data[0])
-
+    subject = transformer.fit_transform(sample_input_data[0])
     # Then
-    assert int(math.ceil(subject.loc[11376,'windspeed'])) == 17
+    assert subject.loc[bachelors_education_indexes[0],'education'] == 9

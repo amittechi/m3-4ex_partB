@@ -5,15 +5,15 @@ parent, root = file.parent, file.parents[1]
 sys.path.append(str(root))
 
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler, OneHotEncoder, FunctionTransformer
+from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.compose import ColumnTransformer
 
 from adultcensus_model.config.core import config
 from adultcensus_model.processing.features import CustomMapper
 from adultcensus_model.processing.features import ModeImputer
-from adultcensus_model.processing.features import CustomOrdinalEncoder
-from adultcensus_model.processing.features import OutlierHandler
+#from adultcensus_model.processing.features import CustomOrdinalEncoder
+#from adultcensus_model.processing.features import OutlierHandler
 
 
 adultcensus_pipe = Pipeline(

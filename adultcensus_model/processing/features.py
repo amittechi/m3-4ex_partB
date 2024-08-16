@@ -74,16 +74,6 @@ class CustomMapper(BaseEstimator, TransformerMixin):
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         X = X.copy()
 
-        # for column in self.variables:
-        #     if not pd.api.types.is_numeric_dtype(X[column]):
-        #         unique_values = X[column].unique()
-        #         # Apply binary encoding if there are exactly two unique values
-        #         if len(unique_values) == 2:
-        #             X[column] = X[column].map({unique_values[0]: 0, unique_values[1]: 1})
-        #             X[column] = X[column].astype(int)
-        #             print(f"{column} has been binary encoded.")
-
-        # Match the type of keys to the type of values in the DataFrame column
         X[self.variables] = X[self.variables].map(self.mappings)
         print(self.variables, 'mapped!')
         # print(X)
