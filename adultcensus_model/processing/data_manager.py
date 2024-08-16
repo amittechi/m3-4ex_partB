@@ -8,6 +8,7 @@ import typing as t
 import re
 import joblib
 import pandas as pd
+import numpy as np
 from sklearn.pipeline import Pipeline
 from sklearn.datasets import fetch_openml
 
@@ -19,6 +20,7 @@ from adultcensus_model.config.core import DATASET_DIR, TRAINED_MODEL_DIR, config
 
 def pre_pipeline_preparation(*, data_frame: pd.DataFrame) -> pd.DataFrame:
 
+    data_frame.replace('?', np.nan, inplace=True)
     # binary encode the class(target) column
     if config.model_config.class_var in data_frame.columns:
         data_frame[config.model_config.class_var] = data_frame[config.model_config.class_var].map(config.model_config.class_mappings)
@@ -37,9 +39,9 @@ def load_dataset(*, file_name: str) -> pd.DataFrame:
     # dataframe = fetch_openml(data_id=1590, parser='auto', as_frame=True).frame
     
     # Check if the class(target) column exists in the DataFrame only then do preprocessing step
-    if config.model_config.class_var in dataframe.columns:
-        transformed = pre_pipeline_preparation(data_frame=dataframe)
+    transformed = pre_pipeline_preparation(data_frame=dataframe)
 
+    # print(transformed)
     return transformed
 
 

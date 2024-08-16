@@ -31,10 +31,10 @@ def test_mode_imputer_transformer(sample_input_data):
     subject = imputer.fit_transform(sample_input_data[0])
 
     # Then
-    assert subject.loc[null_workclass_indexes[0],'workclass'] == 'Private'
+    assert subject.loc[null_workclass_indexes[0],'workclass'] == sample_input_data[0]['workclass'].mode()[0]
 
     # Then
-    assert subject.loc[null_workclass_indexes[0],'occupation'] == 'Prof-specialty'
+    assert subject.loc[null_occupation_indexes[0],'occupation'] == sample_input_data[0]['occupation'].mode()[0]
     
 def test_mapper_transformer(sample_input_data):
     # Given
@@ -49,3 +49,9 @@ def test_mapper_transformer(sample_input_data):
     subject = transformer.fit_transform(sample_input_data[0])
     # Then
     assert subject.loc[bachelors_education_indexes[0],'education'] == 9
+
+def get_key_by_value(d, value):
+    for key, val in d.items():
+        if val == value:
+            return key
+    return None  # Return None if the value is not found
