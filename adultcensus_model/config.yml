@@ -2,8 +2,8 @@
 package_name: adultcensus_model
 
 # Data Files
-training_data_file: 
-test_data_file: test.csv
+training_data_file: adult_census.csv
+test_data_file: test_adult_census.csv
 
 # Variables
 # The variable we are attempting to predict (Survival)
@@ -85,8 +85,8 @@ sex_mappings:
   Female: 1
 
 class_mappings:
-  ">50K": 0
-  "<=50K": 1
+  "<=50K": 0
+  ">50K": 1
 
 education_mappings:
   Preschool: 0

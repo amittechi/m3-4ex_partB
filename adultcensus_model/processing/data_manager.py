@@ -27,11 +27,15 @@ def pre_pipeline_preparation(*, data_frame: pd.DataFrame) -> pd.DataFrame:
 
 
 def _load_raw_dataset(*, file_name: str) -> pd.DataFrame:
-    dataframe = fetch_openml(data_id=1590, parser='auto', as_frame=True).frame
+    dataframe = pd.read_csv(Path(f"{DATASET_DIR}/{file_name}"))
+    # dataframe = fetch_openml(data_id=1590, parser='auto', as_frame=True).frame
     return dataframe
 
 def load_dataset(*, file_name: str) -> pd.DataFrame:
-    dataframe = fetch_openml(data_id=1590, parser='auto', as_frame=True).frame
+    dataframe = pd.read_csv(Path(f"{DATASET_DIR}/{file_name}"))
+    
+    # dataframe = fetch_openml(data_id=1590, parser='auto', as_frame=True).frame
+    
     # Check if the class(target) column exists in the DataFrame only then do preprocessing step
     if config.model_config.class_var in dataframe.columns:
         transformed = pre_pipeline_preparation(data_frame=dataframe)
